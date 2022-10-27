@@ -19,7 +19,7 @@ class My_Filter {
 
 My_Filter::My_Filter(){
         scan_sub_ = node_.subscribe<sensor_msgs::LaserScan> ("/scan", 100, &My_Filter::scanCallback, this);
-        point_cloud_publisher_ = node_.advertise<sensor_msgs::PointCloud2> ("/points_raw", 100, false);
+        point_cloud_publisher_ = node_.advertise<sensor_msgs::PointCloud2> ("/points_scan", 100, false);
         tfListener_.setExtrapolationLimit(ros::Duration(0.1));
         //tfListener_.sendTransform(transform_, ros::Time::now(), "velodyne", "laser")
 }
