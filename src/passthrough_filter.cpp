@@ -3,7 +3,7 @@
 #include <pcl/point_types.h>
 #include <pcl_conversions/pcl_conversions.h>
 
-static std::string str_point_topic = "/points_scan";
+static std::string str_point_topic = "/points_no_ground";
 
 class PassthroughFilter
 {
@@ -31,15 +31,21 @@ void PassthroughFilter::PointCallback(const sensor_msgs::PointCloud2ConstPtr& cl
 
     pcl::PassThrough<pcl::PointXYZ> pass_x;
     pass_x.setFilterFieldName("x");
-    pass_x.setFilterLimits(-5.5, 0.0);
+    pass_x.setFilterLimits(0, 5.6);//points_scanにやるときは-5.5, 0.0
     pass_x.setInputCloud(cloud);
     pass_x.filter(*cloud);
 
     pcl::PassThrough<pcl::PointXYZ> pass_y;
     pass_y.setFilterFieldName("y");
-    pass_y.setFilterLimits(-1.5, 2.0);
+    pass_y.setFilterLimits(-2.4, 1.5);//points_scanにやるときは-1.5, 2.0
     pass_y.setInputCloud(cloud);
     pass_y.filter(*cloud);
+
+    pcl::PassThrough<pcl::PointXYZ> pass_z;
+    pass_z.setFilterFieldName("z");
+    pass_z.setFilterLimits(-0.96, 3.0);//points_scanにやるときはなし
+    pass_z.setInputCloud(cloud);
+    pass_z.filter(*cloud);
 
     sensor_msgs::PointCloud2 cloud_pub;
     pcl::toROSMsg(*cloud, cloud_pub);
