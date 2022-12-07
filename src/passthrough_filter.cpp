@@ -2,6 +2,7 @@
 #include <pcl/filters/passthrough.h>
 #include <pcl/point_types.h>
 #include <pcl_conversions/pcl_conversions.h>
+#include <pcl/filters/voxel_grid.h>
 
 class PassthroughFilter
 {
@@ -11,6 +12,8 @@ class PassthroughFilter
         ros::Publisher cloud_publiser;
         ros::Subscriber cloud_sub;
 
+        bool voxel_grid_bool = false;
+        double leafsize = 0.1;
         std::string str_points_topic = "/points_no_ground";
         double min_x = 0.0;
         double max_x = 5.5;
@@ -27,6 +30,8 @@ class PassthroughFilter
 PassthroughFilter::PassthroughFilter()
     :private_nh("~")
 {
+    private_nh.getParam("voxel_grid_bool", voxel_grid_bool);
+    private_nh.getParam("leafsize", leafsize);   
     private_nh.getParam("str_points_topic", str_points_topic);
     private_nh.getParam("min_x", min_x);
     private_nh.getParam("max_x", max_x);
@@ -45,6 +50,8 @@ void PassthroughFilter::PointCallback(const sensor_msgs::PointCloud2ConstPtr& cl
 {
     pcl::PointCloud<pcl::PointXYZ> input;
     pcl::fromROSMsg(*cloud_msg, input);
+    std::cout << "\nRaw data size: " << input.size() << std::endl;
+
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>(input));
 
     pcl::PassThrough<pcl::PointXYZ> pass_x;
@@ -64,6 +71,16 @@ void PassthroughFilter::PointCallback(const sensor_msgs::PointCloud2ConstPtr& cl
     pass_z.setFilterLimits(min_z, max_z);//points_scanにやるときはなし
     pass_z.setInputCloud(cloud);
     pass_z.filter(*cloud);
+
+    std::cout << "Passthrough filtering data size: " << cloud->size() << std::endl;
+
+    if(voxel_grid_bool == true){
+        pcl::VoxelGrid<pcl::PointXYZ> vg;
+        vg.setInputCloud (cloud);
+        vg.setLeafSize (leafsize, leafsize, leafsize);
+        vg.filter (*cloud);
+        std::cout << "Voxel grid filering data size: " << cloud->size() << std::endl;
+    }
 
     sensor_msgs::PointCloud2 cloud_pub;
     pcl::toROSMsg(*cloud, cloud_pub);

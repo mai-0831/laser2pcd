@@ -1,13 +1,15 @@
 <launch>
 
     <node pkg="laser2pcd" type="passthrough_filter" name="passthrough_filter_node" output="screen">
+        <param name="voxel_grid_bool" value="true"/>
+        <param name="leafsize" value="0.1"/> 
         <param name="str_points_topic" value="/points_raw"/>
-        <param name="min_x" value="0.0" />
-        <param name="max_x" value="20.0" />
-        <param name="min_y" value="-10.0" />
-        <param name="max_y" value="10.0" />
+        <param name="min_x" value="0.6" />
+        <param name="max_x" value="100.0" />
+        <param name="min_y" value="-15.0" />
+        <param name="max_y" value="15.0" />
         <param name="min_z" value="-2.0" />
-        <param name="max_z" value="2.0" />
+        <param name="max_z" value="100.0" />
     </node>
     
 </launch>
