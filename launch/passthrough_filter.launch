@@ -8,7 +8,7 @@
         <param name="max_x" value="100.0" />
         <param name="min_y" value="-15.0" />
         <param name="max_y" value="15.0" />
-        <param name="min_z" value="-2.0" />
+        <param name="min_z" value="-0.95" />
         <param name="max_z" value="100.0" />
     </node>
     
