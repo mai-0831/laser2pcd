@@ -48,25 +48,25 @@ PassthroughFilter::PassthroughFilter()
 
 void PassthroughFilter::PointCallback(const sensor_msgs::PointCloud2ConstPtr& cloud_msg)
 {
-    pcl::PointCloud<pcl::PointXYZ> input;
+    pcl::PointCloud<pcl::PointXYZI> input;
     pcl::fromROSMsg(*cloud_msg, input);
     std::cout << "\nRaw data size: " << input.size() << std::endl;
 
-    pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>(input));
+    pcl::PointCloud<pcl::PointXYZI>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZI>(input));
 
-    pcl::PassThrough<pcl::PointXYZ> pass_x;
+    pcl::PassThrough<pcl::PointXYZI> pass_x;
     pass_x.setFilterFieldName("x");
     pass_x.setFilterLimits(min_x, max_x);//points_scanにやるときは-5.5, 0.0
     pass_x.setInputCloud(cloud);
     pass_x.filter(*cloud);
 
-    pcl::PassThrough<pcl::PointXYZ> pass_y;
+    pcl::PassThrough<pcl::PointXYZI> pass_y;
     pass_y.setFilterFieldName("y");
     pass_y.setFilterLimits(min_y, max_y);//points_scanにやるときは-1.5, 2.0
     pass_y.setInputCloud(cloud);
     pass_y.filter(*cloud);
 
-    pcl::PassThrough<pcl::PointXYZ> pass_z;
+    pcl::PassThrough<pcl::PointXYZI> pass_z;
     pass_z.setFilterFieldName("z");
     pass_z.setFilterLimits(min_z, max_z);//points_scanにやるときはなし
     pass_z.setInputCloud(cloud);
@@ -75,7 +75,7 @@ void PassthroughFilter::PointCallback(const sensor_msgs::PointCloud2ConstPtr& cl
     std::cout << "Passthrough filtering data size: " << cloud->size() << std::endl;
 
     if(voxel_grid_bool == true){
-        pcl::VoxelGrid<pcl::PointXYZ> vg;
+        pcl::VoxelGrid<pcl::PointXYZI> vg;
         vg.setInputCloud (cloud);
         vg.setLeafSize (leafsize, leafsize, leafsize);
         vg.filter (*cloud);
